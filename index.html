@@ -1,5 +1,5 @@
 <html>
-  <body style="background-color:#00BFFF;">
+  <body style="background-color:	#F8F8FF;">
   <center>
   <h1>WELCOMME TO MY WEBPAGE</h1>
   </center>
@@ -225,7 +225,7 @@ this string is a palindrome   */<br>
     
  
 <p align="left">
-  Develop an assembly language program to compute nCr using recursive procedure.
+ 4. Develop an assembly language program to compute nCr using recursive procedure.
 Assume that ‘n’ and ‘r’ are non-negative integers.
   
   
@@ -314,6 +314,72 @@ ncr endp<br>
 end <br>
   
   
+    </p>
+
+ <p align="left">5.Design and develop an assembly language program to read the current time and 
+   Date from the system and display it in the standard format on the screen.<br>
+   
+   
+   <br>
+   
+.model small<br>
+.data<br>
+    msg db 10,13, 'the current time is --- $'<br>
+    time db '00:00:00$'<br>
+
+.code<br>
+    mov ax,@data<br>
+    mov ds,ax<br>
+
+    lea bx,time<br>
+
+    lea dx,msg           ;print the msg<br>
+    mov ah,09h<br>
+    int 21h<br>
+
+    call get_time<br>
+
+    lea dx,time           ;print the time returned<br>
+    mov ah,09h<br>
+    int 21h<br>
+
+    mov ah,4ch<br>
+    int 21h<br>
+
+get_time proc<br>
+
+        mov ah,2ch         ;extracting the system time using dos function<br>
+        int 21h<br>
+
+        mov al,ch          ; moving Hr value into al reg<br>
+        call convert       ;ascii conversion<br>
+        mov [bx],ax        ; soring converted ascii value into array time<br>
+                           ; using little endian concept<br>
+
+        mov al,cl          ; moving min stored in cl into al reg<br>
+        call convert       ;ascii conversion<br>
+        mov [bx+3],ax      ; soring converted ascii value into array time<br>
+                           ; using little endian concept<br>
+
+        mov al,dh            ; moving sec value into al reg<br>
+        call convert         ;ascii conversion<br>
+        mov [bx+6],ax        ; soring converted ascii value into array time<br>
+        ret                   ; using little endian concept<br>
+
+ get_time endp<br>
+
+ convert proc<br>
+             mov ah,00h<br>
+             mov dl,10<br><br>
+             div dl<br>
+             or ax,3030h<br>
+             ret<br>
+ convert endp<br>
+
+end<br>
+   
+   
+   
     </p>
     
     
