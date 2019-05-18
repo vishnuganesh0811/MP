@@ -8,49 +8,82 @@
       a key element “X” inalist of ‘n’ 16-bit numbers. Adopt Binary search algorithm
       in your program forsearching.</p>
      <p align="left">
-          unsuc db 10,13, 'unsucess search $'
+   unsuc db 10,13, 'unsucess search $'<br>
    key dw 2234h
+<br>
 
  .code
+<br>
 
     mov ax,@data
+<br>
     mov ds,ax
+<br>
     mov bx,00h         ;bx=low
+<br>
     mov dx,leng        ;dx=high
+<br>
     mov cx,key
+<br>
 
 again:cmp bx,dx                ;is (low < high)
+<br>
     ja failure
+<br>
 
       mov ax,bx
+<br>      
       add ax,dx
+<br>
       shr ax,1                   ;mid=(low+high)/2
+<br>
       mov si,ax
+<br>
       dec si                     ;to acess a word data
-      add si,si                  
+<br>
+      add si,si     
+<br>             
       cmp cx,array[si]           ;compare key with array[mid]
+<br>
       jae next
+<br>
 
       dec ax
+<br>
       mov dx,ax                   ; high=mid-1
+<br>
       jmp again
+<br>
 
 next: je success
+<br>
       inc ax                      ;low= mid+1
+<br>
       mov bx,ax
+<br>
       jmp again
+<br>
 
 
                                  ;ascii conversion
+<br>
 success: add al,'0'
+<br>
      mov pos,al
+<br>
      display suc
+<br>
      jmp exit
+<br>
 
 failure: display unsuc
+<br>
 exit:
+<br>
       mov ah,4ch
+<br>
       int 21h
+<br>
 </p>
     
     
