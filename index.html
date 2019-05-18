@@ -88,7 +88,7 @@ exit:
  <p align="left">
        2. Design and develop an assembly program to sort a given set of ‘n’ 16-bit numbers in
 ascending order. Adopt Bubble Sort algorithm to sort given elements.<br>
-   
+   <br><br>
    .model small<br>
 .data<br>
     num db 05,03,06,01,07,02<br>
@@ -122,8 +122,199 @@ nochng: inc si<br>
     
     
     </p> 
+    <p align="left">
+      3. Develop an assembly language program to reverse a given string and verify whether it
+is a palindrome or not. Display the appropriate message.<br>
+      
+      <br>.model small<br>
+
+display macro msg<br>
+        lea dx,msg<br>
+        mov ah,09h<br>
+        int 21h<br>
+endm <br>
+
+
+.data
+<br>
+         str db 40 dup ('$')<br>
+         rev db 40 dup ('$')<br>
+         msg1 db 10,13, 'enter the string: $'<br>
+         msg2 db 10,13, 'the reverse string is: $'<br>
+         pal db  10,13, 'this string is a palindrome$'<br>
+         npal db  10,13, 'this string is not a polindrome$'<br>
+
+.code<br>
+        mov ax ,@data<br>
+        mov ds,ax<br>
+       
+        mov es,ax<br>
+
+        display msg1<br>
+
+        xor cx,cx           ;clear cx reg.<br>
+                         
+
+       lea si,str<br>
+                                      
+
+        read:   mov ah,01h<br>
+                int 21h<br>
+                cmp al,0dh<br>
+                jz next<br>
+                inc cx<br>
+                mov [si],al<br>
+                inc si<br>
+                
+                jmp read<br>
+
+              
+        next:   lea di,rev<br>
+                mov bp,cx<br><br>
+
+        trans:  dec si                  ;moving the data to ES with DI as pointer<br>
+                mov al,[si]<br>
+                mov[di],al<br>
+                inc di<br>
+                loop trans<br>
+
+                display msg2<br>
+
+                lea dx,rev<br>
+                mov ah,09h<br>
+                int 21h<br>
+
+                
+                lea di,rev<br>
+                lea si,str<br>
+
+                mov cx,bp<br>
+                cld<br>
+
+         repe  cmpsb<br>
+               jnz fail<br>
+                 
+               display pal <br>
+                                    
+               jmp last <br>
+
+         fail: display npal<br>
+                                    
+
+         last:mov ah,4ch<br>
+                int 21h<br>
+  end<br>
+
+  
+/*  output:<br>
+
+C:\masm>plal<br>
+
+enter the string: desk<br>
+the reverse string is: ksed<br>
+this string is not a polindrome<br>
+C:\masm>plal<br>
+
+enter the string: madam<br>
+the reverse string is: madam<br>
+this string is a palindrome   */<br>
+
+      
     
+    </p>
     
+ 
+<p align="left">
+  Develop an assembly language program to compute nCr using recursive procedure.
+Assume that ‘n’ and ‘r’ are non-negative integers.
+  
+  
+  .model small<br>
+
+initds macro<br>
+ mov ax,@data ; initializing the data segment<br>
+ mov ds,ax ; it is ds, not dx<br>
+endm<br>
+<br>
+putchar macro char<br>
+ mov dl,char ; load the printable character's hex value in dl<br><br>
+ mov ah,2 ; function number is 9<br>
+ int 21h ; using dos interrupt 21h<br>
+endm<br>
+
+exit macro<br><br>
+ mov ah,4ch ; to terminate<br>
+ int 21h<br>
+endm<br>
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;<br>
+
+.data<br>
+ n db 6 ; aim is to find -> 6c3<br>
+ r db 3<br>
+ answer db 0<br>
+ .code<br>
+ initds<br>
+
+ mov al,n<br>
+ mov bl,r<br>
+
+ call ncr ; call ncr procedure<br>
+
+ mov al,answer ; copy that answer to your al<br>
+ aam ; split al into al & ah<br>
+ add ax,3030h ; convert into ascii<br>
+ mov bx,ax ; take a copy to be safe<br>
+ putchar bh ; display 1st digit<br>
+ putchar bl ; display 2nd digit<br>
+<br>
+ exit<br>
+ncr proc<br>
+
+ cmp bl,0 ; n<br>
+C0 = 1<br>
+ jne go1<br>
+ add answer,1<br>
+ ret<br>
+
+ go1: cmp bl,al ; n<br>
+Cn = 1<br>
+ jne go2<br>
+ add answer,1<br>
+ ret<br>
+
+ go2: cmp bl,1 ; n<br>
+C1 = n<br>
+ jne go3<br>
+ add answer,al<br>
+ ret<br>
+
+ go3: dec al ; n<br>
+Cn-1= n<br>
+ cmp bl,al<br>
+ jne go4<br>
+ inc al<br>
+ add answer,al<br>
+ ret<br>
+
+ go4: push ax<br>
+ push bx ; n-1<br>
+ call ncr ; C<br>
+ pop bx ; r<br>
+ pop ax<br>
+
+ dec bx<br>
+ push ax ; n-1<br>
+ push bx ; C<br>
+ call ncr ; r-1<br>
+ pop bx<br>
+ pop ax<br>
+ ret<br>
+ncr endp<br>
+end <br>
+  
+  
+    </p>
     
     
     
