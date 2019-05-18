@@ -85,7 +85,43 @@ exit:
       int 21h
 <br>
 </p>
+ <p align="left">
+       2. Design and develop an assembly program to sort a given set of ‘n’ 16-bit numbers in
+ascending order. Adopt Bubble Sort algorithm to sort given elements.<br>
+   
+   .model small<br>
+.data<br>
+    num db 05,03,06,01,07,02<br>
+    count equ 06h              ;symbolic constant<br>
+
+.code<br>
+     
+    mov ax,@data<br>
+    mov ds,ax<br>
+    mov dx,count-1    ;n-1,where n=no. of elements in the array<br>
+
+outer: mov cx,dx       ;no. of iterations/passes== no. of comparisons in each pass<br>
+       lea si,num<br>
+
+inner: mov al,[si]<br>
+       cmp al,[si+1]<br>
+       jbe nochng<br>
+
+       xchg al,[si+1]<br>
+       mov [si],al<br>
+
+nochng: inc si<br>
+        loop inner<br>
+        dec dx<br>
+        jnz outer<br>
+        
+        mov ah,4ch<br>
+        int 21h<br>
+ end<br>
+
     
+    
+    </p> 
     
     
     
