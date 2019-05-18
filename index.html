@@ -7,7 +7,51 @@
     <p align="left">1. Design and develop an assembly language program to search
       a key element “X” inalist of ‘n’ 16-bit numbers. Adopt Binary search algorithm
       in your program forsearching.</p>
-    
+     <p align="left">
+          unsuc db 10,13, 'unsucess search $'
+   key dw 2234h
+
+ .code
+
+    mov ax,@data
+    mov ds,ax
+    mov bx,00h         ;bx=low
+    mov dx,leng        ;dx=high
+    mov cx,key
+
+again:cmp bx,dx                ;is (low < high)
+    ja failure
+
+      mov ax,bx
+      add ax,dx
+      shr ax,1                   ;mid=(low+high)/2
+      mov si,ax
+      dec si                     ;to acess a word data
+      add si,si                  
+      cmp cx,array[si]           ;compare key with array[mid]
+      jae next
+
+      dec ax
+      mov dx,ax                   ; high=mid-1
+      jmp again
+
+next: je success
+      inc ax                      ;low= mid+1
+      mov bx,ax
+      jmp again
+
+
+                                 ;ascii conversion
+success: add al,'0'
+     mov pos,al
+     display suc
+     jmp exit
+
+failure: display unsuc
+exit:
+      mov ah,4ch
+      int 21h
+</p>
     
     
     
