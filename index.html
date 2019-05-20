@@ -393,8 +393,624 @@ end<br>
    
    
     </p>
+      <p align="left">6. To write and simulate ARM assembly language programs for data transfer,
+arithmetic and logical operations (Demonstrate with the help of a suitable program).
+         AREA PRG6,CODE,READONLY ; defining logical area named prg6 and the
+code which is readonly<br>
+
+ENTRY ; the entry point where the code starts<br>
+<br>
+ LDR R0,=5 ; data transfer – R0=5<br>
+ LDR R1,=3 ; R1=3<br>
+<br>
+ ADD R2,R0,R1 ; arithmetic ADD R2=8 (5+3)<br>
+ SUB R3,R0,R1 ; SUB R3=2 (5-3)<br>
+ MUL R4,R0,R1 ; MUL R4=F (5*3 = 15 = F)<br>
+<br>
+ AND R5,R0,R1 ; logical AND R5=1 (5&&3)<br>
+ ORR R6,R0,R1 ; OR R6=7 (5||3)<br>
+ EOR R7,R0,R1 ; XOR R7=6 (5^3)<br>
+<br>
+ END ; end of the program <br>
+        
+      </p>
+      
+     <p align="left">
+       7. To write and simulate C Programs for ARM microprocessor using KEIL
+(Demonstrate with the help of a suitable program).<br>
+       
+       <br>
+       #include <lpc214x.h> //holds good for all lpc214 series processors<br>
+<br>
+int main()<br>
+{<br>
+ int a,b,c,d,e,f;<br>
+ a=5;<br>
+ b=3;<br>
+ c=a+b;<br>
+ d=a-b;<br>
+ e=a*b;<br>
+ f=a/b;<br>
+ return 0;<br>
+}<br>
+
+       
+      </p>
+      <p align="center"><font size="6"><b>HARDWARE PROGRAMS: PART B</b></font></p>
+       
+    <p align="left">
+      
+      8. a. Design and develop an assembly program to demonstrate BCD Up-Down Counter
+(00-99) on the Logic Controller Interface.<br>
+      <br>
+      .MODEL SMALL<br>
+.STACK<br>
+.DATA<br>
+        PA EQU 01190H<br>
+        PB EQU 01191H<br>
+        PC EQU 01192H<br>
+        CR EQU 01193H<br>
+.CODE<br>
+START:  MOV AX,@DATA<br>
+        MOV DS,AX<br>
+        MOV DX,CR<br>
+        MOV AL,82H<br>
+        OUT DX,AL<br>
+        MOV BL,00H<br>
+        MOV BH,01H<br>
+AGAIN:  MOV DX,PB<br>
+        IN AL,DX<br>
+        CMP AL,0FFH<br>
+        JZ NEXT1<br>
+        CMP AL,0FEH<br>
+        JZ NEXT2<br>
+        MOV AH,4CH<br>
+        INT 21H<br>
+NEXT1:  MOV AL,BL<br>
+        CALL DISP<br>
+        ADD AL,01H<br>
+        DAA<br>
+        MOV BL,AL<br>
+        JMP AGAIN<br>
+NEXT2:  MOV AL,BL<br>
+        CALL DISP<br>
+        SUB AL,01<br>
+        DAS<br>
+        MOV BL,AL<br>
+        JMP AGAIN<br>
+DISP:   MOV DX,PA<br>
+        OUT DX,AL<br>
+        CALL DELAY<br>
+        RET<br>
+DELAY:  MOV SI,055FFH  ;or we can chage delay value 001FFH<br>
+LOOP1:  MOV DI,0FFFFH<br>
+LOOP2:  DEC DI<br>
+        JNZ LOOP2<br>
+        DEC SI<br>
+        JNZ LOOP1<br>
+        RET<br>
+        END START<br>
+<br>
+;;output : if input is [FF] then bcd upcounter(00-99)<br>
+ ;; if input is [FE] then BCD DOWN COUNTER(99-00)<br>
+      <br>
+      
+      </p>
+      
+    <p align="left">
+      8.b Design and develop an assembly program to read the status of two 8-bit inputs (X  Y) from the Logic Controller Interface and display X*Y.<br>
+      <br>
+      
+      .MODEL SMALL<br>
+.STACK<br>
+.DATA<br>
+        PA EQU 01190H<br>
+        PB EQU 01191H<br>
+        PC EQU 01192H<br>
+        CR EQU 01193H<br>
+        M1 DB "SELECT I/P X FROM LC AND PRESS KEY FROM KB$"<br>
+        M2 DB "SELECT I/P Y FROM LC AND PRESS KEY FROM KB$"<br>
+        M3 DB "LOWER ORDER BYTE OF RESULT (PRESS KEY FROM KB)$"<br>
+        M4 DB "HIGHER ORDER BYTE OF RESULT (PRESS KEY FROM KB)$"<br>
+        NLCR DB 13,10,"$"<br>
+.CODE<br>
+START:  MOV AX,@DATA<br>
+        MOV DS,AX<br>
+        MOV DX,CR<br>
+        MOV AL,83H<br>
+        OUT DX,AL<br>
+        LEA DX,M1<br>
+        CALL DMWAIT<br>
+        MOV DX,PB<br>
+        IN AL,DX<br>
+        MOV BL,AL<br>
+        LEA DX,M2<br>
+        CALL DMWAIT<br>
+        MOV DX,PB<br>
+        IN AL,DX<br>
+        MUL BL<br>
+        MOV BH,AH<br>
+        MOV DX,PA<br>
+        OUT DX,AL<br>
+        LEA DX,M3<br>
+        CALL DMWAIT<br>
+        MOV DX,PA<br>
+        MOV AL,BH<br>
+        OUT DX,AL<br>
+        LEA DX,M4<br>
+        CALL DMWAIT<br>
+        MOV AH,4CH<br>
+        INT 21H<br>
+DMWAIT: MOV AH,09H<br>
+        INT 21H<br>
+        LEA DX,NLCR<br>
+        MOV AH,9<br>
+        INT 21H<br>
+        MOV AH,07H<br>
+        INT 21H<br>
+        RET<br>
+        END START<br>
+;;OUTPUT: IF   X=4 AND  Y=3  BY MULTIPLICATION THE   RESULT = 12<br>
+      <br>
+      </p>
+      
+      
+       <p align="left">
+        9. Design and develop an assembly program to display messages “FIRE” and “HELP”
+alternately with flickering effects on a 7-segment display interface for a suitable
+period of time. Ensure a flashing rate that makes it easy to read both the messages
+(Examiner does not specify these delay values nor is it necessary for the student to
+compute these values).<br>
+         <br>
+      
+.MODEL SMALL<br>
+.STACK<br>
+.DATA<br>
+        PA EQU 01190H<br>
+        PB EQU 01191H<br>
+        PC EQU 01192H<br>
+        CR EQU 01193H<br>
+        FIRE DB 71H,9FH,11H,61H<br>
+        HELP DB 91H,61H,0E3H,31H<br>
+        N DB 05H<br>
+.CODE<br>
+START:  MOV AX,@DATA<br>
+        MOV DS,AX<br>
+        MOV DX,CR<br>
+        MOV AL,80H<br>
+        OUT DX,AL<br>
+        MOV AL,00H<br>
+        MOV DX,PC<br>
+        OUT DX,AL<br>
+AGAIN:  LEA BX,FIRE<br>
+        CALL DISW<br>
+        CALL DELAY<br>
+        LEA BX,HELP<br>
+        CALL DISW<br>
+        CALL DELAY<br>
+        DEC N<br>
+        JNZ AGAIN<br>
+        MOV AH,4CH<br>
+        INT 21H<br>
+DISW:   MOV SI,03H<br>
+AGN:    MOV AH,[BX][SI]<br>
+        CALL DISP<br>
+        DEC SI<br>
+        JNS AGN<br>
+        RET<br>
+DISP:   MOV CL,08H<br>
+BACK:   MOV DX,PB<br>
+        MOV AL,AH<br>
+        OUT DX,AL<br>
+        MOV DX,PC<br>
+        MOV AL,01H<br>
+        OUT DX,AL<br>
+        MOV AL,00H<br>
+        OUT DX,AL<br>
+        ROR AH,01H<br>
+        DEC CL<br>
+        JNZ BACK<br>
+        RET<br>
+DELAY:  MOV DI,0FFFFH<br>
+BACK2:  MOV CX,0AFFFH<br>
+BACK3:  DEC CX<br>
+        JNZ BACK3<br>
+        DEC DI<br>
+        JNZ BACK2<br>
+        RET<br>
+        END START<br>
+
+;;OUT PUT :  IT WILL DISPLAY THE FIRE AND HELP <br>
+         <br>
+         
+      
+      </p>
+    
+    <p align="left">
+     10. Design and develop an assembly program to drive a Stepper Motor interface and
+rotate the motor in specified direction (clockwise or counter-clockwise) by N steps
+(Direction and N are specified by the examiner). Introduce suitable delay between
+successive steps. (Any arbitrary value for the delay may be assumed by the student).<br>
+      <br>
+      
+      .MODEL SMALL<br>
+.STACK<br>
+.DATA<br>
+        PA EQU 01190H<br>
+        PB EQU 01191H<br>
+        PC EQU 01192H<br>
+        CR EQU 01193H<br>
+        N1 DB 48<br>
+        MSG DB "MOTOR IS ROTATING IN CLOCKWISE DIRECTION$"<br>
+.CODE<br>
+START:  MOV AX,@DATA<br>
+        MOV DS,AX<br>
+        LEA DX,MSG<br>
+        MOV AH,09H<br>
+        INT 21H<br>
+        MOV DX,CR<br>
+        MOV AL,80H<br>
+        OUT DX,AL<br>
+        MOV BL,N1<br>
+        MOV AL,88H<br>
+BACK:   OUT DX,AL<br>
+        CALL DELAY<br>
+        ROR AL,01H<br>
+        DEC BL<br>
+        JNZ BACK<br>
+        MOV AH,4CH<br>
+        INT 21H<br>
+DELAY PROC NEAR<br>
+        PUSH BX<br>
+        MOV BX,055FFH ;;IF WE GIVE THE VAL AS 000FF THEN SPEED OF STEPPER MOTOR INCREASE ITS SPEED <br>
+B2:     MOV CX,0FFFFH<br>
+B1:     LOOP B1<br>
+        DEC BX<br>
+        JNZ B2<br>
+        POP BX<br>
+        RET<br>
+        DELAY ENDP<br>
+        END START<br>
+           <br>
+
+;;OUTPUT : OBSERVE THE STEPPER MOTOR ITS START ROTATING [CLOCK WISE DIRECTION]<br>
+<br>
+      
+    <br> 
+      
+      
+      </p>
+  <p align="left">
     
     
+    11. Design and develop an assembly language program to<br>  
+11a. Generate the Sine Wave using DAC interface (The output of the DAC is to
+be displayed on the CRO).<br>
+    
+    .model small<br>
+.stack<br>
+.data<br>
+ table db 80h,96h,0abh,0c0h,0d2h,0e2h,0eeh,0f8h,0feh,0ffh,0feh,0f8h,0eeh,0e2h,0d2h,0c0h,<br>
+          0abh,96h,80h,69h,54h,3fh,2dh,1dh,1dh,11h,07h,01h,00h,01h,07h,011h,1dh,2dh,3fh,54h,69h<br>
+ count equ 36d<br>
+ .code<br>
+  mov ax,@data<br>
+  mov ds,ax<br>
+  mov dx,01193h<br>
+  mov al,80h<br>
+  out dx,al<br>
+  lp1: lea si,table<br>
+       mov cx,count<br>
+  lp2:mov dx,01190h<br>
+      mov al,[si]<br>
+      out dx,al<br>
+      inc si<br>
+      call delay<br>
+      loop lp2<br>
+      mov ah,01h<br>
+      int 16h<br>
+      jz lp1<br>
+      mov ah,4ch<br>
+      int 21h<br>
+      delay proc<br>
+      mov ax,0ffffh<br>
+  lp3:dec ax<br>
+      jnz lp3<br>
+  ret<br>
+  delay endp<br>
+  end<br>
+
+
+;Output : CRO IS  DISPLAYED  SINE WAVE<br>
+
+    
+      </p>
+      
+     <p align="left">
+     11b. Generate a Half Rectified Sine waveform using the DAC interface. (The
+output of the DAC is to be displayed on the CRO).<br>
+       <br>
+       .model small<br>
+.stack<br>
+.data<br>
+ table db 80h,96h,0abh,0c0h,0d2h,0e2h,0eeh,0f8h,0feh,0ffh,<br>
+           0feh,0f8h,0eeh,0e2h,0d2h,0c0h,0abh,96h,80h,80h,80h,80h,<br>80h,80h,80h,80h,80h,80h,80h,80h,80h,80h,80h,80h,80h,80h<br>
+ count equ 36d<br>
+ .code<br>
+  start:mov ax,@data<br>
+  mov ds,ax<br>
+  mov dx,01193h<br>
+  mov al,80h<br>
+  out dx,al<br>
+  lp1:lea si,table<br>
+  mov cx,count<br>
+  lp2:mov dx,01190h<br>
+  mov al,[si]<br>
+  out dx,al<br>
+  inc si<br>
+  call delay<br>
+  loop lp2<br>
+  mov ah,01h<br>
+  int 16h<br>
+  jz lp1<br>
+  mov ah,4ch<br>
+  int 21h<br>
+  delay proc<br>
+  mov ax,0ffffh<br>
+  lp3:dec ax<br>
+  jnz lp3<br>
+  ret<br>
+  delay endp<br>
+  end<br>
+<br>
+; OUTPUT : CRO is displayed on Half rectified sine wave. <br>
+      
+      </p>
+      <p align="left">
+        12. To interface LCD with ARM processor-- ARM7TDMI/LPC2148. Write and execute
+programs in C language for displaying text messages and numbers on LCD<br>
+        <br>
+        // LCD INTERFACING<br>
+#include<lpc214x.h><br>
+#include<stdio.h><br>
+//Function prototypes<br>
+void lcd_init(void);<br>
+void wr_cn(void);<br>
+void clr_disp(void);<br>
+void delay(unsigned int);<br>
+void lcd_com(void);<br>
+void wr_dn(void);<br>
+void lcd_data(void);<br>
+unsigned char temp1;<br>
+unsigned long int temp,r=0;<br>
+unsigned char *ptr,disp[] = "BMSIT&M",disp1[] = "LCD INTERFACING";<br>
+int main()<br>
+{<br>
+PINSEL0 = 0X00000000; // configure P0.0 TO P0.15 as GPIO<br>
+IO0DIR = 0x000000FC; //configure o/p lines for lcd [P0.2-P0.7]<br>
+lcd_init(); //lcd initialisation<br>
+delay(3200); // delay 1.06ms<br>
+ clr_disp(); //clear display<br>
+delay(3200); // delay 1.06ms<br>
+temp1 = 0x81; //Display starting address of first line 2nd pos<br>
+lcd_com(); //function to send command to lcd<br>
+ptr = disp; // pointing data<br>
+ while(*ptr!='\0')<br>
+ {<br>
+ temp1 = *ptr;<br>
+ lcd_data(); //function to send data to lcd<br>
+ptr ++;<br>
+ }<br>
+temp1 = 0xC0; // Display starting address of second line 1st pos<br>
+lcd_com(); //function to send command to lcd<br>
+ ptr = disp1; // pointing second data<br>
+while(*ptr!='\0')<br>
+ {<br>
+ temp1 = *ptr;<br>
+ lcd_data(); //send data to lcd<br>
+ptr ++;<br>
+ }<br>
+ while(1);<br>
+} //end of main()<br>
+// lcd initialisation routine.<br>
+void lcd_init(void)<br>
+{<br>
+temp = 0x30; //command to test LCD voltage level<br>
+wr_cn();<br>
+delay(3200);<br>
+temp = 0x30; //command to test LCD voltage level<br>
+wr_cn();<br>
+delay(3200);<br>
+temp = 0x30; //command to test LCD voltage level<br>
+wr_cn();<br>
+delay(3200);<br>
+temp = 0x20; // change to 4 bit mode from default 8 bit mode<br>
+wr_cn();<br>
+delay(3200);<br><br>
+temp1 = 0x28; // load command for lcd function setting with lcd in 4 bit mode,<br>
+lcd_com(); // 2 line and 5x7 matrix display<br>
+delay(3200);<br>
+temp1 = 0x0C; // load a command for display on, cursor on and blinking off<br>
+lcd_com();<br>
+delay(800);<br>
+temp1 = 0x06; // command for cursor increment after data dump<br>
+lcd_com();<br>
+delay(800);<br>
+temp1 = 0x80; // set the cursor to beginning of line 1<br>
+lcd_com();<br>
+delay(800);<br>
+}<br>
+void lcd_com(void)<br>
+{<br>
+temp = temp1 & 0xf0; //masking higher nibble first<br>
+ wr_cn();<br>
+ temp = temp1 & 0x0f; //masking lower nibble<br>
+ temp = temp << 4;<br>
+ wr_cn();<br>
+ delay(500); // some delayv
+}<br>
+// command nibble o/p routine<br>
+void wr_cn(void) //write command reg<br>
+{<br>
+IO0CLR = 0x000000FC; // clear the port lines.<br>
+IO0SET = temp; // Assign the value to the PORT lines<br>
+IO0CLR = 0x00000004; // clear bit RS = 0<br>
+IO0SET = 0x00000008; // E=1<br>
+delay(10);<br>
+IO0CLR = 0x00000008; //E=0<br>
+}<br>
+<br>
+// data nibble o/p routine<br>
+void wr_dn(void) ////write data reg<br>
+{<br>
+IO0CLR = 0x000000FC; // clear the port lines.<br>
+IO0SET = temp; // Assign the value to the PORT lines<br>
+IO0SET = 0x00000004; // set bit RS = 1<br>
+IO0SET = 0x00000008; // E=1<br>
+delay(10);<br>
+IO0CLR = 0x00000008; //E=0<br>
+}<br>
+// data o/p routine which also outputs high nibble first<br>
+// and lower nibble next<br>
+void lcd_data(void)<br>
+{<br>
+ temp = temp1 & 0xf0; //masking higher nibble first<br>
+ temp = temp ;<br>
+ wr_dn();<br>
+ temp= temp1 & 0x0f; //masking lower nibble<br>
+ temp= temp << 4; //shift 4bit to left<br>
+ wr_dn();<br>
+ delay(100);<br>
+}<br>
+void clr_disp(void) // function to clear the LCD screen<br>
+{<br>
+ temp1 = 0x01;<br>
+ lcd_com();<br>
+ delay(500);<br>
+}<br>
+void delay(unsigned int r1) // delay function using for loop<br>
+{<br>
+for(r=0;r<r1;r++);<br>
+} <br>
+        
+      </p>
+        
+      <p align="left">
+       13. To interface Stepper motor with ARM processor-- ARM7TDMI/LPC2148. Write a
+program to rotate stepper motor<br>
+        <br>
+        
+      #include <LPC21xx.h> <br>
+
+ 
+
+void clock_wise(void) ; <br>
+
+void anti_clock_wise(void) ; <br>
+
+ 
+<br>
+unsigned int var1 ; <br>
+
+unsigned long int i = 0 , j = 0 , k = 0 ; <br>
+
+ 
+
+int main(void) <br>
+
+{ <br>
+
+ PINSEL2 = 0x00000000; //P1.20 to P1.23 GPIO <br>
+
+ IO1DIR |= 0x00F00000 ; //P1.20 to P1.23 made as output <br>
+
+ 
+<br>
+ while(1) <br>
+<br>
+ { <br>
+
+ for( j = 0 ; j < 50 ; j++ ) // 50 times in Clock wise Rotation <br>
+
+ clock_wise() ; // rotate one round clockwise <br>
+
+ <br>
+
+ for( k = 0 ; k < 65000 ; k++ ) ; // Delay to show anti_clock Rotation <br>
+<br>
+<br>
+ for( j=0 ; j < 50 ; j++ ) // 50 times in Anti Clock wise Rotation <br>
+<br>
+ anti_clock_wise() ; // rotate one round anticlockwise <br>
+
+ <br>
+
+ for( k = 0 ; k < 65000 ; k++ ) ; // Delay to show ANTI_clock Rotation <br>
+} <br>
+
+ 
+
+}// End of main <br>
+
+ 
+
+void clock_wise(void) <br>
+<br>
+{ <br>
+
+ var1 = 0x00080000; //For Clockwise <br>
+
+ for( i = 0 ; i <= 3 ; i++ ) // for A B C D Stepping<br> 
+
+ { <br>
+
+ var1 <<= 1 ; <br>
+<br>
+ IO1CLR =0x00F00000 ; //clearing all 4 bits <br>
+<br><br>
+ IO1SET = var1 ; // setting perticular bit <br>
+<br>
+ for( k = 0 ; k < 3000 ; k++ ); //for step speed variation <br>
+<br>
+ } <br>
+<br>
+} <br>
+
+ <br>
+
+void anti_clock_wise(void) <br>
+<br>
+{ <br>
+
+ var1 = 0x00800000 ; //For Anticlockwise <br>
+<br>
+IO1CLR =0x00F00000 ; //clearing all 4 bits <br>
+<br>
+ IO1SET = var1 ; <br>
+<br>
+ for( k = 0 ; k < 3000 ; k++ ) ; <br>
+<br>
+ for( i = 0 ; i < 3 ; i++ ) // for A B C D Stepping <br>
+<br>
+ { <br>
+
+ var1 >>=1; //rotating bits <br>
+
+ IO1CLR =0x00F00000 ; // clar all bits before setting <br>
+
+ IO1SET = var1 ; // setting perticular bit <br>
+
+ for( k = 0 ; k < 3000 ; k++ ) ; //for step speed variation <br>
+<br>
+ } <br>
+<br>
+} <br>
+<br>
+       <br> 
+        </p>
+        
+        
+      
     
     </font>
     </center>
